@@ -1,4 +1,4 @@
-# Decoding Claude Code: Architecture & Design Philosophy> An in-depth reverse-engineering and architectural analysis of Anthropic's Claude Code CLI.
+# Inside Claude Code: Architecture & Design Philosophy > An in-depth reverse-engineering and architectural analysis of Anthropic's Claude Code CLI.
 
   
 # Decoding Claude Code: Architecture & Design Philosophy
