@@ -118,4 +118,4 @@ Contributions, insights, and corrections are welcome! If you've discovered an in
 
 ## Disclaimer
 
-This repository is an independent, educational analysis. It is not affiliated with, officially supported by, or endorsed by Anthropic. All intellectual property regarding Claude Code belongs to Anthropic.
+This repository is an independent, educational analysis. All property regarding Claude Code belongs to Anthropic.
