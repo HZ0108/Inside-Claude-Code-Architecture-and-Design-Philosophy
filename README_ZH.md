@@ -1,6 +1,6 @@
 # Inside Claude Code：架构与设计哲学
 
-> 对 Anthropic Claude Code CLI 的深度逆向工程与架构分析。
+> 对 Claude Code CLI 的深度逆向工程与架构分析。
 
 ---
 
