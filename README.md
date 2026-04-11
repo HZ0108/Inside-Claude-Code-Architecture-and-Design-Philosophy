@@ -4,7 +4,7 @@
 
 ---
 
-**This is the English version.** For the Chinese version, please refer to [README_ZH.md](./README_ZH.md).
+For the Chinese version, please refer to [README_ZH.md](./README_ZH.md).
 
 ---
 
