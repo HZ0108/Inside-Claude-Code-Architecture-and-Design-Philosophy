@@ -19,6 +19,8 @@ For the Chinese version, please refer to [README_ZH.md](./README_ZH.md).
     - [3. Agent Algorithm & Tool Orchestration](#3-agent-algorithm--tool-orchestration)
     - [4. Context Dynamic Injection](#4-context-dynamic-injection)
     - [5. Query Reliability Mechanism](#5-query-reliability-mechanism)
+    - [6. Sub-Agent System](#6-sub-agent-system)
+    - [7. Tool System](#7-tool-system)
   - [Document Catalog](#document-catalog)
   - [Key Discoveries](#key-discoveries)
   - [Contributing](#contributing)
@@ -88,6 +90,22 @@ Strategies for maintaining agent reliability under conditions of partial failure
 
 ---
 
+### 6. Sub-Agent System
+
+Claude Code's multi-agent system is built on a layered topology that handles the complexity of distributed task execution. The core distinction lies between **LocalAgentTask** (isolated subprocess with hierarchical `AbortController` cancellation) and **RemoteAgentTask** (agents running in remote CCR environments via MCP). The **Coordinator Mode** acts as a meta-agent, spawning multiple parallel worker agents and aggregating their results — enabling complex research and multi-pronged implementation pipelines. Agent teams feature a structured communication protocol, a shared task context pool, and conflict resolution strategies for concurrent writes.
+
+📄 **Full Report:** [EN/Sub-Agent System.pdf](./EN/Sub-Agent%20System.pdf) | [EN/Agent Team Analysis.pdf](./EN/Agent%20Team%20Analysis.pdf)
+
+---
+
+### 7. Tool System
+
+The Tool System is the execution backbone of Claude Code, built around a plugin-based architecture that supports dynamic registration. Tools are classified by their concurrency safety — **parallel-safe** tools (e.g., `Read`, `Glob`, `Grep`) are executed concurrently to maximize throughput, while **exclusive** tools (e.g., `Bash`, `Write`, `Edit`) are serialized to prevent race conditions. The execution engine enforces a dependency graph, handles tool result streaming, and implements a graceful error recovery layer so that individual tool failures do not cascade into full pipeline崩溃.
+
+📄 **Full Report:** [EN/Tool System.pdf](./EN/Tool%20System.pdf)
+
+---
+
 ## Document Catalog
 
 | # | Topic | English | 中文 |
@@ -97,6 +115,8 @@ Strategies for maintaining agent reliability under conditions of partial failure
 | 3 | Agent Algorithm & Tool Orchestration | [EN/Agent Algorithm Flow.pdf](./EN/Agent%20Algorithm%20Flow.pdf) | [Agent算法流程.pdf](./ZH/Agent算法流程.pdf) |
 | 4 | Context Dynamic Injection | [EN/Context Dynamic Injection.pdf](./EN/Context%20Dynamic%20Injection.pdf) | [上下文动态注入方案.pdf](./ZH/上下文动态注入方案.pdf) |
 | 5 | Query Reliability Mechanism | [EN/Query Reliability Mechanism.pdf](./EN/Query%20Reliability%20Mechanism.pdf) | [query可靠性机制.pdf](./ZH/query可靠性机制.pdf) |
+| 6 | Sub-Agent System | [EN/Sub-Agent System.pdf](./EN/Sub-Agent%20System.pdf) | [Sub-Agent系统.pdf](./ZH/Sub-Agent系统.pdf) |
+| 7 | Tool System | [EN/Tool System.pdf](./EN/Tool%20System.pdf) | [工具系统.pdf](./ZH/工具系统.pdf) |
 
 ---
 
@@ -107,6 +127,8 @@ Strategies for maintaining agent reliability under conditions of partial failure
 - **Token Economics:** Hardcoded token budgets for compression recovery (e.g., allocating strictly 5,000 tokens for restoring recently read files after a full compaction) to balance context retention with API limits.
 - **Concurrency-Aware Tool Executor:** Not all tools are equal — the executor distinguishes between read-only parallelizable tools and stateful exclusive tools, preventing race conditions without serializing everything.
 - **Filesystem-First Memory:** Choosing plain Markdown + YAML over a vector database was a deliberate trade-off: human-readable, Git-friendly, and zero additional infrastructure.
+- **Coordinator-Driven Team Intelligence:** The multi-agent topology goes beyond simple parallelization — the Coordinator synthesizes results from heterogeneous agents into coherent, actionable outputs.
+- **Plugin-Based Tool Architecture:** The tool system is not hardwired; dynamic registration enables extensibility while maintaining strict concurrency safety guarantees.
 
 ---
 
