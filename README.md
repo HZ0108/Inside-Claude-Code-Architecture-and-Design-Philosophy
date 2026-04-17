@@ -14,16 +14,17 @@ For the Chinese version, please refer to [README_ZH.md](./README_ZH.md).
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Core Architectural Pillars](#core-architectural-pillars)
-    - [1. Context & Token Management](#1-context--token-management)
-    - [2. Multi-Tier Memory System](#2-multi-tier-memory-system)
-    - [3. Agent Algorithm & Tool Orchestration](#3-agent-algorithm--tool-orchestration)
-    - [4. Context Dynamic Injection](#4-context-dynamic-injection)
-    - [5. Query Reliability Mechanism](#5-query-reliability-mechanism)
-    - [6. Sub-Agent System](#6-sub-agent-system)
-    - [7. Tool System](#7-tool-system)
-    - [8. Hook System](#8-hook-system)
-    - [9. Intent Routing](#9-intent-routing)
-  - [Document Catalog](#document-catalog)
+    - [1. Comprehensive Overview](#1-comprehensive-overview)
+    - [2. Context & Token Management](#2-context--token-management)
+    - [3. Multi-Tier Memory System](#3-multi-tier-memory-system)
+    - [4. Agent Algorithm & Tool Orchestration](#4-agent-algorithm--tool-orchestration)
+    - [5. Context Dynamic Injection](#5-context-dynamic-injection)
+    - [6. Query Reliability Mechanism](#6-query-reliability-mechanism)
+    - [7. Sub-Agent System](#7-sub-agent-system)
+    - [8. Tool System](#8-tool-system)
+    - [9. Hook System](#9-hook-system)
+    - [10. Intent Routing](#10-intent-routing)
+    - [Document Catalog](#document-catalog)
   - [Key Discoveries](#key-discoveries)
   - [Contributing](#contributing)
   - [Disclaimer](#disclaimer)
@@ -36,7 +37,15 @@ Claude Code is more than just a wrapper around the Claude API — it is a sophis
 
 ## Core Architectural Pillars
 
-### 1. Context & Token Management
+### 1. Comprehensive Overview
+
+A bird's-eye view of the entire Claude Code system — connecting all nine architectural pillars into a unified narrative. This document serves as the recommended starting point for readers who want to understand the big picture before diving into individual subsystems.
+
+📄 **Full Report:** [EN/Overview: Comprehensive Analysis.pdf](./EN/Overview:%20Comprehensive%20Analysis.pdf)
+
+---
+
+### 2. Context & Token Management
 
 Claude Code's context management is built on a philosophy of **zero intentional information loss**. It operates through a multi-layered fallback mechanism to keep the LLM within its token budget while preserving critical task details:
 
@@ -49,7 +58,7 @@ Claude Code's context management is built on a philosophy of **zero intentional 
 
 ---
 
-### 2. Multi-Tier Memory System
+### 3. Multi-Tier Memory System
 
 Unlike traditional agents that rely on vector databases, Claude Code uses a pure **filesystem-based approach** (Markdown + YAML Frontmatter) to ensure absolute alignment with Git workflows and human readability.
 
@@ -61,7 +70,7 @@ Unlike traditional agents that rely on vector databases, Claude Code uses a pure
 
 ---
 
-### 3. Agent Algorithm & Tool Orchestration
+### 4. Agent Algorithm & Tool Orchestration
 
 The execution engine is driven by a powerful `AsyncGenerator` query loop and a dynamic Sub-Agent architecture.
 
@@ -76,7 +85,7 @@ The execution engine is driven by a powerful `AsyncGenerator` query loop and a d
 
 ---
 
-### 4. Context Dynamic Injection
+### 5. Context Dynamic Injection
 
 A per-turn injection mechanism that feeds dynamic context — such as staleness warnings or malware-read alerts — into the conversation without permanently bloating the static system prompt. This allows runtime information to influence the model's behavior on a case-by-case basis while keeping the base prompt stable.
 
@@ -84,7 +93,7 @@ A per-turn injection mechanism that feeds dynamic context — such as staleness 
 
 ---
 
-### 5. Query Reliability Mechanism
+### 6. Query Reliability Mechanism
 
 Strategies for maintaining agent reliability under conditions of partial failure, ambiguous responses, or API-level issues. Covers retry logic, timeout handling, graceful degradation, and how Claude Code ensures progress even when individual queries fail or return unexpected results.
 
@@ -92,15 +101,15 @@ Strategies for maintaining agent reliability under conditions of partial failure
 
 ---
 
-### 6. Sub-Agent System
+### 7. Sub-Agent System
 
 Claude Code's multi-agent system is built on a layered topology that handles the complexity of distributed task execution. The core distinction lies between **LocalAgentTask** (isolated subprocess with hierarchical `AbortController` cancellation) and **RemoteAgentTask** (agents running in remote CCR environments via MCP). The **Coordinator Mode** acts as a meta-agent, spawning multiple parallel worker agents and aggregating their results — enabling complex research and multi-pronged implementation pipelines. Agent teams feature a structured communication protocol, a shared task context pool, and conflict resolution strategies for concurrent writes.
 
-📄 **Full Report:** [EN/Sub-Agent System.pdf](./EN/Sub-Agent%20System.pdf) | [EN/Agent Team Analysis.pdf](./EN/Agent%20Team%20Analysis.pdf)
+📄 **Full Report:** [EN/Sub-Agent System.pdf](./EN/Sub-Agent-System.pdf) | [EN/Agent Team Analysis.pdf](./EN/Agent%20Team%20Analysis.pdf)
 
 ---
 
-### 7. Tool System
+### 8. Tool System
 
 The Tool System is the execution backbone of Claude Code, built around a plugin-based architecture that supports dynamic registration. Tools are classified by their concurrency safety — **parallel-safe** tools (e.g., `Read`, `Glob`, `Grep`) are executed concurrently to maximize throughput, while **exclusive** tools (e.g., `Bash`, `Write`, `Edit`) are serialized to prevent race conditions. The execution engine enforces a dependency graph, handles tool result streaming, and implements a graceful error recovery layer so that individual tool failures do not cascade into full pipeline崩溃.
 
@@ -108,7 +117,7 @@ The Tool System is the execution backbone of Claude Code, built around a plugin-
 
 ---
 
-### 8. Hook System
+### 9. Hook System
 
 Claude Code's extensibility model is built around a declarative Hook System that allows users to configure automated responses to internal events (such as tool invocations, task completions, or command submissions) through a simple `~/.claude/hooks.json` configuration file. Hooks are scoped to the current session, project, or global level, and can run arbitrary shell commands or prompt the user for confirmation before proceeding. The system supports permission management, input/output capture, and graceful hook failure handling — ensuring that a broken hook does not halt the entire agent pipeline.
 
@@ -116,7 +125,7 @@ Claude Code's extensibility model is built around a declarative Hook System that
 
 ---
 
-### 9. Intent Routing
+### 10. Intent Routing
 
 Before executing any user command, Claude Code runs an Intent Routing layer that classifies the incoming request into one of several execution modes — such as a local agent task, a remote CCR agent, or an inline skill invocation. This routing decision is made based on keyword patterns, command structure, and contextual hints from the conversation history. The router determines not just *where* a task runs but also *how* it is structured (e.g., whether to spawn a Coordinator, use streaming, or enter a read-only diagnostic mode).
 
@@ -128,15 +137,16 @@ Before executing any user command, Claude Code runs an Intent Routing layer that
 
 | # | Topic | English | 中文 |
 |---|-------|---------|------|
-| 1 | Context & Token Management | [EN/Context Management.pdf](./EN/Context%20Management.pdf) | [上下文管理.pdf](./ZH/上下文管理.pdf) |
-| 2 | Multi-Tier Memory System | [EN/Memory System.pdf](./EN/Memory%20System.pdf) | [记忆系统.pdf](./ZH/记忆系统.pdf) |
-| 3 | Agent Algorithm & Tool Orchestration | [EN/Agent Algorithm Flow.pdf](./EN/Agent%20Algorithm%20Flow.pdf) | [Agent算法流程.pdf](./ZH/Agent算法流程.pdf) |
-| 4 | Context Dynamic Injection | [EN/Context Dynamic Injection.pdf](./EN/Context%20Dynamic%20Injection.pdf) | [上下文动态注入方案.pdf](./ZH/上下文动态注入方案.pdf) |
-| 5 | Query Reliability Mechanism | [EN/Query Reliability Mechanism.pdf](./EN/Query%20Reliability%20Mechanism.pdf) | [query可靠性机制.pdf](./ZH/query可靠性机制.pdf) |
-| 6 | Sub-Agent System | [EN/Sub-Agent System.pdf](./EN/Sub-Agent%20System.pdf) | [Sub-Agent系统.pdf](./ZH/Sub-Agent系统.pdf) |
-| 7 | Tool System | [EN/Tool System.pdf](./EN/Tool%20System.pdf) | [工具系统.pdf](./ZH/工具系统.pdf) |
-| 8 | Hook System | [EN/Hook System.pdf](./EN/Hook%20System.pdf) | [Hook系统.pdf](./ZH/Hook系统.pdf) |
-| 9 | Intent Routing | [EN/Intent Routing.pdf](./EN/Intent%20Routing.pdf) | [意图路由.pdf](./ZH/意图路由.pdf) |
+| 1 | Comprehensive Overview | [Overview: Comprehensive Analysis.pdf](./EN/Overview:%20Comprehensive%20Analysis.pdf) | [总览：综合分析.pdf](./ZH/总览：综合分析.pdf) |
+| 2 | Context & Token Management | [EN/Context Management.pdf](./EN/Context%20Management.pdf) | [上下文管理.pdf](./ZH/上下文管理.pdf) |
+| 3 | Multi-Tier Memory System | [EN/Memory System.pdf](./EN/Memory%20System.pdf) | [记忆系统.pdf](./ZH/记忆系统.pdf) |
+| 4 | Agent Algorithm & Tool Orchestration | [EN/Agent Algorithm Flow.pdf](./EN/Agent%20Algorithm%20Flow.pdf) | [Agent算法流程.pdf](./ZH/Agent算法流程.pdf) |
+| 5 | Context Dynamic Injection | [EN/Context Dynamic Injection.pdf](./EN/Context%20Dynamic%20Injection.pdf) | [上下文动态注入方案.pdf](./ZH/上下文动态注入方案.pdf) |
+| 6 | Query Reliability Mechanism | [EN/Query Reliability Mechanism.pdf](./EN/Query%20Reliability%20Mechanism.pdf) | [query可靠性机制.pdf](./ZH/query可靠性机制.pdf) |
+| 7 | Sub-Agent System | [EN/Sub-Agent-System.pdf](./EN/Sub-Agent-System.pdf) | [sub-agent系统.pdf](./ZH/sub-agent系统.pdf) |
+| 8 | Tool System | [EN/Tool System.pdf](./EN/Tool%20System.pdf) | [工具系统.pdf](./ZH/工具系统.pdf) |
+| 9 | Hook System | [EN/Hook System.pdf](./EN/Hook%20System.pdf) | [Hook系统.pdf](./ZH/Hook系统.pdf) |
+| 10 | Intent Routing | [EN/Intent Routing.pdf](./EN/Intent%20Routing.pdf) | [意图路由.pdf](./ZH/意图路由.pdf) |
 
 ---
 
