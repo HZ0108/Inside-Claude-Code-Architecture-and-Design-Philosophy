@@ -21,6 +21,8 @@
     - [5. Query 可靠性机制](#5-query-可靠性机制)
     - [6. Sub-Agent 系统](#6-sub-agent-系统)
     - [7. 工具系统](#7-工具系统)
+    - [8. Hook 系统](#8-hook-系统)
+    - [9. 意图路由](#9-意图路由)
   - [文档目录](#文档目录)
   - [核心发现](#核心发现)
   - [贡献指南](#贡献指南)
@@ -108,6 +110,22 @@ Claude Code 的多 Agent 系统建立在分层拓扑之上，核心区分在于 
 
 ---
 
+### 8. Hook 系统
+
+Claude Code 的可扩展性建立在声明式 Hook 系统之上，允许用户通过 `~/.claude/hooks.json` 配置文件，对内部事件（如工具调用、任务完成或命令提交）配置自动化响应。Hook 分为会话级、项目级和全局级作用域，支持运行任意 shell 命令或在执行前向用户请求确认。系统提供权限管理、输入/输出捕获以及优雅的 Hook 失败处理——确保损坏的 Hook 不会中断整个 Agent 流水线。
+
+📄 **完整报告：** [Hook系统.pdf](./ZH/Hook系统.pdf)
+
+---
+
+### 9. 意图路由
+
+在执行任何用户命令之前，Claude Code 运行一层意图路由（Intent Routing），将传入的请求分类到不同的执行模式——如本地 Agent 任务、远程 CCR Agent 或内联 Skill 调用。路由决策基于关键词模式、命令结构以及对话历史中的上下文线索。路由器不仅决定任务在哪里运行，还决定其结构方式（例如，是否启动 Coordinator、是否使用流式响应，或进入只读诊断模式）。
+
+📄 **完整报告：** [意图路由.pdf](./ZH/意图路由.pdf)
+
+---
+
 ## 文档目录
 
 | # | 主题 | English | 中文 |
@@ -119,6 +137,8 @@ Claude Code 的多 Agent 系统建立在分层拓扑之上，核心区分在于 
 | 5 | Query 可靠性机制 | [EN/Query Reliability Mechanism.pdf](./EN/Query%20Reliability%20Mechanism.pdf) | [query可靠性机制.pdf](./ZH/query可靠性机制.pdf) |
 | 6 | Sub-Agent 系统 | [EN/Sub-Agent System.pdf](./EN/Sub-Agent%20System.pdf) | [Sub-Agent系统.pdf](./ZH/Sub-Agent系统.pdf) |
 | 7 | 工具系统 | [EN/Tool System.pdf](./EN/Tool%20System.pdf) | [工具系统.pdf](./ZH/工具系统.pdf) |
+| 8 | Hook 系统 | [EN/Hook System.pdf](./EN/Hook%20System.pdf) | [Hook系统.pdf](./ZH/Hook系统.pdf) |
+| 9 | 意图路由 | [EN/Intent Routing.pdf](./EN/Intent%20Routing.pdf) | [意图路由.pdf](./ZH/意图路由.pdf) |
 
 ---
 
@@ -131,6 +151,8 @@ Claude Code 的多 Agent 系统建立在分层拓扑之上，核心区分在于 
 - **文件系统优先的记忆方案：** 选择纯 Markdown + YAML 而非向量数据库是一种深思熟虑的权衡：人类可读、Git 友好、无需额外基础设施。
 - **Coordinator 驱动的团队智能：** 多 Agent 拓扑不只是简单的并行化——Coordinator 将异构 Agent 的结果综合为连贯、可执行的输出。
 - **插件化工具架构：** 工具系统并非硬编码，动态注册机制在保持严格并发安全保证的同时实现可扩展性。
+- **事件驱动的 Hook 系统：** 可扩展性并非事后考虑——声明式 Hook 配置（`hooks.json`）配合会话/项目/全局级作用域，使用户能够在 Agent 生命周期的关键节点注入自定义逻辑，而无需修改核心代码库。
+- **意图驱动的路由：** 路由器充当系统的"前台"——在向 LLM 发送任何 Token 之前，将每条传入命令分类到正确的执行上下文，从而在成本、延迟和能力匹配上实现优化。
 
 ---
 

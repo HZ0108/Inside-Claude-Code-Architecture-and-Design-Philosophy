@@ -21,6 +21,8 @@ For the Chinese version, please refer to [README_ZH.md](./README_ZH.md).
     - [5. Query Reliability Mechanism](#5-query-reliability-mechanism)
     - [6. Sub-Agent System](#6-sub-agent-system)
     - [7. Tool System](#7-tool-system)
+    - [8. Hook System](#8-hook-system)
+    - [9. Intent Routing](#9-intent-routing)
   - [Document Catalog](#document-catalog)
   - [Key Discoveries](#key-discoveries)
   - [Contributing](#contributing)
@@ -106,6 +108,22 @@ The Tool System is the execution backbone of Claude Code, built around a plugin-
 
 ---
 
+### 8. Hook System
+
+Claude Code's extensibility model is built around a declarative Hook System that allows users to configure automated responses to internal events (such as tool invocations, task completions, or command submissions) through a simple `~/.claude/hooks.json` configuration file. Hooks are scoped to the current session, project, or global level, and can run arbitrary shell commands or prompt the user for confirmation before proceeding. The system supports permission management, input/output capture, and graceful hook failure handling — ensuring that a broken hook does not halt the entire agent pipeline.
+
+📄 **Full Report:** [EN/Hook System.pdf](./EN/Hook%20System.pdf)
+
+---
+
+### 9. Intent Routing
+
+Before executing any user command, Claude Code runs an Intent Routing layer that classifies the incoming request into one of several execution modes — such as a local agent task, a remote CCR agent, or an inline skill invocation. This routing decision is made based on keyword patterns, command structure, and contextual hints from the conversation history. The router determines not just *where* a task runs but also *how* it is structured (e.g., whether to spawn a Coordinator, use streaming, or enter a read-only diagnostic mode).
+
+📄 **Full Report:** [EN/Intent Routing.pdf](./EN/Intent%20Routing.pdf)
+
+---
+
 ## Document Catalog
 
 | # | Topic | English | 中文 |
@@ -117,6 +135,8 @@ The Tool System is the execution backbone of Claude Code, built around a plugin-
 | 5 | Query Reliability Mechanism | [EN/Query Reliability Mechanism.pdf](./EN/Query%20Reliability%20Mechanism.pdf) | [query可靠性机制.pdf](./ZH/query可靠性机制.pdf) |
 | 6 | Sub-Agent System | [EN/Sub-Agent System.pdf](./EN/Sub-Agent%20System.pdf) | [Sub-Agent系统.pdf](./ZH/Sub-Agent系统.pdf) |
 | 7 | Tool System | [EN/Tool System.pdf](./EN/Tool%20System.pdf) | [工具系统.pdf](./ZH/工具系统.pdf) |
+| 8 | Hook System | [EN/Hook System.pdf](./EN/Hook%20System.pdf) | [Hook系统.pdf](./ZH/Hook系统.pdf) |
+| 9 | Intent Routing | [EN/Intent Routing.pdf](./EN/Intent%20Routing.pdf) | [意图路由.pdf](./ZH/意图路由.pdf) |
 
 ---
 
@@ -129,6 +149,8 @@ The Tool System is the execution backbone of Claude Code, built around a plugin-
 - **Filesystem-First Memory:** Choosing plain Markdown + YAML over a vector database was a deliberate trade-off: human-readable, Git-friendly, and zero additional infrastructure.
 - **Coordinator-Driven Team Intelligence:** The multi-agent topology goes beyond simple parallelization — the Coordinator synthesizes results from heterogeneous agents into coherent, actionable outputs.
 - **Plugin-Based Tool Architecture:** The tool system is not hardwired; dynamic registration enables extensibility while maintaining strict concurrency safety guarantees.
+- **Event-Driven Hook System:** Extensibility is not an afterthought — a declarative hook configuration (`hooks.json`) with session/project/global scoping allows users to inject custom logic at well-defined points in the agent lifecycle without modifying the core codebase.
+- **Intent-Driven Routing:** The router acts as the system's "front desk" — classifying every incoming command into the right execution context before a single token is sent to the LLM, optimizing for cost, latency, and capability fit.
 
 ---
 
